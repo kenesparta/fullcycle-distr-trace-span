@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  service_a:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ENV_ARG: ${ENV_ARG}
+    image: service_a
+    ports:
+      - "8080:8080"
+    container_name: service_a
+    networks:
+      - service_a-ntw
+
+networks:
+  service_a-ntw:
+  service_b-ntw:
