@@ -1,0 +1,18 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+
+message Location {
+  string cep = 1;
+}
+
+message TemperatureResponse {
+  string location = 1;
+  float temp_c = 2;
+  float temp_f = 3;
+  float temp_k = 4;
+}
+
+service TemperatureService {
+  rpc GetWeather(Location) returns (TemperatureResponse);
+}
