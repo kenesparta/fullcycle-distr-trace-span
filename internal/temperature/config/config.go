@@ -3,7 +3,8 @@ package config
 type Config struct {
 	Temperature Temperature
 	CEP         CEP
-	App         App
+	Grpc        Grpc
+	GrpcClient  GrpcClient
 }
 
 type Temperature struct {
@@ -15,6 +16,10 @@ type CEP struct {
 	URL string
 }
 
-type App struct {
+type Grpc struct {
 	Port string
+}
+
+type GrpcClient struct {
+	Host string
 }

@@ -15,8 +15,8 @@ type GetWeather struct {
 func NewGetWeather(
 	locationRepo entity.LocationRepo,
 	tempRepo entity.TemperatureRepo,
-) *GetWeather {
-	return &GetWeather{
+) GetWeather {
+	return GetWeather{
 		locationRepo: locationRepo,
 		tempRepo:     tempRepo,
 	}
