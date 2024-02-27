@@ -26,8 +26,8 @@ func (gw *GetWeather) Execute(
 	ctx context.Context,
 	input dto.LocationInput,
 ) (dto.TemperatureOutput, error) {
-	if cepEr := entity.CEPValidation(input.CEP); cepEr != nil {
-		return dto.TemperatureOutput{}, cepEr
+	if cepErr := entity.CEPValidation(input.CEP); cepErr != nil {
+		return dto.TemperatureOutput{}, cepErr
 	}
 
 	location, err := gw.locationRepo.Get(ctx, input.CEP)

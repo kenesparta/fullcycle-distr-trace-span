@@ -2,6 +2,12 @@ syntax = "proto3";
 package pb;
 option go_package = "./pb";
 
+enum ErrorCode {
+  NO_ERROR = 0;
+  INVALID_CEP = 1;
+  CEP_NOT_FOUND = 2;
+}
+
 message Location {
   string cep = 1;
 }
@@ -11,6 +17,7 @@ message TemperatureResponse {
   float temp_c = 2;
   float temp_f = 3;
   float temp_k = 4;
+  ErrorCode temp_error = 5;
 }
 
 service TemperatureService {

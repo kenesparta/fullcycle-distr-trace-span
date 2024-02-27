@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/infra/grpc/pb_health"
 	"log"
 	"net"
 
@@ -29,6 +30,7 @@ func main() {
 		grpcServer,
 		service.NewTemperatureService(getWeather),
 	)
+	pb_health.RegisterHealthServer(grpcServer, &service.HealthServer{})
 	reflection.Register(grpcServer)
 
 	lis, listErr := net.Listen("tcp", fmt.Sprintf(":%s", cfg.Grpc.Port))

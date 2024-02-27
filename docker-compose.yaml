@@ -1,18 +1,17 @@
 version: '3.7'
 
 services:
-  service_a:
-    build:
-      context: .
-      dockerfile: Dockerfile-svc-a
-      args:
-        ENV_ARG: ${ENV_ARG}
-    image: service_a
-    ports:
-      - "8080:8080"
-    container_name: service_a
-    networks:
-      - services_ntw
+  #  otel-collector:
+  #    container_name: otel-collector
+  #    image: otel/opentelemetry-collector:0.92.0
+  #    restart: always
+  #    command: ["--config=/etc/otel-collector-config.yaml"]
+  #    networks:
+  #      - services_ntw
+  #    ports:
+  #      - ${OTEL_GRPC_PORT}:${OTEL_GRPC_PORT}
+  #      - ${OTEL_PRMTH_METRICS_PORT}:${OTEL_PRMTH_METRICS_PORT}
+  #      - ${OTEL_PRMTH_COLLECTOR_PORT}:${OTEL_PRMTH_COLLECTOR_PORT}
 
   service_b:
     build:
@@ -25,17 +24,18 @@ services:
     networks:
       - services_ntw
 
-  otel-collector:
-    container_name: otel-collector
-    image: otel/opentelemetry-collector:0.92.0
-    restart: always
-    command: ["--config=/etc/otel-collector-config.yaml"]
+  service_a:
+    build:
+      context: .
+      dockerfile: Dockerfile-svc-a
+    image: service_a
+    ports:
+      - "8080:8080"
+    container_name: service_a
+    depends_on:
+      - service_b
     networks:
       - services_ntw
-    ports:
-      - ${OTEL_GRPC_PORT}:${OTEL_GRPC_PORT}
-      - ${OTEL_PRMTH_METRICS_PORT}:${OTEL_PRMTH_METRICS_PORT}
-      - ${OTEL_PRMTH_COLLECTOR_PORT}:${OTEL_PRMTH_COLLECTOR_PORT}
 
 networks:
   services_ntw:

@@ -3,6 +3,8 @@
 FROM golang:1.22-bookworm as builder
 WORKDIR /app
 COPY . .
+RUN curl -sL https://github.com/golang-migrate/migrate/releases/download/v4.17.0/migrate.linux-amd64.tar.gz | tar xvz
+RUN apt-get update && apt-get install -y protobuf-compiler
 RUN make init && make service-a/build
 
 FROM scratch

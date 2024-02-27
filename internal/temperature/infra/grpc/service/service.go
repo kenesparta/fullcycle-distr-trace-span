@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"errors"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/dto"
+	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/entity"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/infra/grpc/pb"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/usecase"
 )
@@ -26,9 +28,19 @@ func (ts TemperatureService) GetWeather(
 		CEP: in.Cep,
 	}
 
-	wRes, err := ts.Weather.Execute(ctx, location)
-	if err != nil {
-		return nil, err
+	wRes, execErr := ts.Weather.Execute(ctx, location)
+	switch {
+	case errors.Is(execErr, entity.ErrCEPNotFound):
+		return &pb.TemperatureResponse{
+			TempError: pb.ErrorCode_CEP_NOT_FOUND,
+		}, nil
+	case errors.Is(execErr, entity.ErrCEPNotValid):
+		return &pb.TemperatureResponse{
+			TempError: pb.ErrorCode_INVALID_CEP,
+		}, nil
+	}
+	if execErr != nil {
+		return nil, execErr
 	}
 
 	return &pb.TemperatureResponse{

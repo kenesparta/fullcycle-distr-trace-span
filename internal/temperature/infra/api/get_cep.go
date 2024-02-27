@@ -65,7 +65,7 @@ func (cap *CEPFromAPI) Get(ctx context.Context, cep string) (entity.Location, er
 		return entity.Location{}, unmErr
 	}
 
-	if location.Erro {
+	if location.ErrorOut == "true" {
 		return entity.Location{}, entity.ErrCEPNotFound
 	}
 

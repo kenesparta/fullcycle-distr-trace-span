@@ -8,7 +8,7 @@ type Location struct {
 }
 
 func CEPValidation(cep string) error {
-	re := regexp.MustCompile(`^\d{5}-\d{3}$`)
+	re := regexp.MustCompile(`^\d{8}$`)
 	if !re.MatchString(cep) {
 		return ErrCEPNotValid
 	}
