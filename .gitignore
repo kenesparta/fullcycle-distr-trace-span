@@ -22,3 +22,5 @@
 go.work
 .idea
 /internal/temperature/infra/grpc/pb
+/internal/inputhandle/infra/grpc/pb
+env.json

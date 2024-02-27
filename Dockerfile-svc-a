@@ -1,0 +1,12 @@
+# SERVICE A: Input
+
+FROM golang:1.22-bookworm as builder
+WORKDIR /app
+COPY . .
+RUN make init && make service-a/build
+
+FROM scratch
+COPY --from=builder /app/server .
+COPY --from=builder /app/env.json .
+EXPOSE 8080
+CMD ["./server"]
