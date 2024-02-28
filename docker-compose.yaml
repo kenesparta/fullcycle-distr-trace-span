@@ -1,26 +1,34 @@
-version: '3.7'
+version: '3.9'
 
 services:
-  #  otel-collector:
-  #    container_name: otel-collector
-  #    image: otel/opentelemetry-collector:0.92.0
-  #    restart: always
-  #    command: ["--config=/etc/otel-collector-config.yaml"]
-  #    networks:
-  #      - services_ntw
-  #    ports:
-  #      - ${OTEL_GRPC_PORT}:${OTEL_GRPC_PORT}
-  #      - ${OTEL_PRMTH_METRICS_PORT}:${OTEL_PRMTH_METRICS_PORT}
-  #      - ${OTEL_PRMTH_COLLECTOR_PORT}:${OTEL_PRMTH_COLLECTOR_PORT}
+  zipkin_svc:
+    image: openzipkin/zipkin
+    container_name: zipkin_svc
+    environment:
+      - STORAGE_TYPE=mem
+    ports:
+      - "9411:9411"
+
+  otel-collector:
+    image: otel/opentelemetry-collector:0.92.0
+    container_name: otel-collector
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./.docker/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317" # gRPC port
+      - "4318:4318" # HTTP port
+    depends_on:
+      - zipkin
 
   service_b:
     build:
       context: .
       dockerfile: Dockerfile-svc-b
     image: service_b
-    ports:
-      - "50051"
     container_name: service_b
+    ports:
+      - "50055"
     networks:
       - services_ntw
 
@@ -29,9 +37,9 @@ services:
       context: .
       dockerfile: Dockerfile-svc-a
     image: service_a
+    container_name: service_a
     ports:
       - "8080:8080"
-    container_name: service_a
     depends_on:
       - service_b
     networks:

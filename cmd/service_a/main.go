@@ -4,13 +4,13 @@ import (
 	"log"
 	"net/http"
 
+	conf "github.com/kenesparta/fullcycle-distr-trace-span/config"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/inputhandle/infra/grpc"
-	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/config"
 )
 
 func main() {
-	var cfg config.Config
-	viperCfg := config.NewViper("env.json")
+	var cfg conf.Config
+	viperCfg := conf.NewViper("env.json")
 	viperCfg.ReadViper(&cfg)
 
 	genRt := grpc.SetClient(cfg)

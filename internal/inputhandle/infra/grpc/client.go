@@ -1,9 +1,9 @@
 package grpc
 
 import (
+	"github.com/kenesparta/fullcycle-distr-trace-span/config"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/inputhandle/infra/grpc/pb"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/inputhandle/infra/route"
-	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/config"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"

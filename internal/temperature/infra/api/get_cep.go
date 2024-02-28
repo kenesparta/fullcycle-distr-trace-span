@@ -4,12 +4,12 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"github.com/kenesparta/fullcycle-distr-trace-span/config"
 	"io"
 	"net/http"
 	"strings"
 	"time"
 
-	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/config"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/dto"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/entity"
 )

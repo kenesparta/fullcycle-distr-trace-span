@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/infra/grpc/pb_health"
 	"log"
 	"net"
 
-	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/config"
+	conf "github.com/kenesparta/fullcycle-distr-trace-span/config"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/infra/api"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/infra/grpc/pb"
+	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/infra/grpc/pb_health"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/infra/grpc/service"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/usecase"
 	"google.golang.org/grpc"
@@ -16,8 +16,8 @@ import (
 )
 
 func main() {
-	var cfg config.Config
-	viperCfg := config.NewViper("env.json")
+	var cfg conf.Config
+	viperCfg := conf.NewViper("env.json")
 	viperCfg.ReadViper(&cfg)
 
 	getWeather := usecase.NewGetWeather(

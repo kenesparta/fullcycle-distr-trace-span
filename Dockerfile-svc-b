@@ -10,5 +10,5 @@ RUN make init && make service-b/build
 FROM scratch
 COPY --from=builder /app/server .
 COPY --from=builder /app/env.json .
-EXPOSE 50051
+EXPOSE 50055
 CMD ["./server"]

@@ -5,6 +5,9 @@ type Config struct {
 	CEP         CEP
 	Grpc        Grpc
 	GrpcClient  GrpcClient
+	API         API
+	Zipkin      Zipkin
+	Otel        Otel
 }
 
 type Temperature struct {
@@ -21,5 +24,17 @@ type Grpc struct {
 }
 
 type GrpcClient struct {
+	Host string
+}
+
+type API struct {
+	Port string
+}
+
+type Zipkin struct {
+	Host string
+}
+
+type Otel struct {
 	Host string
 }

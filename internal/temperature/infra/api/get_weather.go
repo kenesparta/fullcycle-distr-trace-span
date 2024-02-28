@@ -5,13 +5,13 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"github.com/kenesparta/fullcycle-distr-trace-span/config"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
 
-	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/config"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/dto"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/entity"
 )

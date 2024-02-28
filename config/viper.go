@@ -43,8 +43,10 @@ func (v *Viper) readConfig(c *Config) {
 	c.CEP.URL = viper.GetString("cep.url")
 	c.Temperature.URL = viper.GetString("temperature.url")
 	c.Temperature.ApiKey = viper.GetString("temperature.api_key")
+	c.API.Port = viper.GetString("api.port")
 
 	c.Grpc.Port = viper.GetString("grpc.port")
 
 	c.GrpcClient.Host = viper.GetString("grpc_client.host")
+
 }
