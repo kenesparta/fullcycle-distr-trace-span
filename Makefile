@@ -1,3 +1,12 @@
+SHELL := /bin/bash
+
+.PHONY: prepare
+prepare:
+	cp env.json.example env.json
+
+run:
+	docker compose up -d --force-recreate
+
 .PHONY: init
 init:
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28

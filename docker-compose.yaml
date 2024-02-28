@@ -9,17 +9,17 @@ services:
     ports:
       - "9411:9411"
 
-  otel-collector:
-    image: otel/opentelemetry-collector:0.92.0
-    container_name: otel-collector
-    command: ["--config=/etc/otel-collector-config.yaml"]
+  otel_collector:
+    image: otel/opentelemetry-collector:0.95.0
+    container_name: otel_collector
+    command: [ "--config=/etc/otel-collector-config.yaml" ]
     volumes:
       - ./.docker/otel-collector-config.yaml:/etc/otel-collector-config.yaml
     ports:
       - "4317:4317" # gRPC port
       - "4318:4318" # HTTP port
     depends_on:
-      - zipkin
+      - zipkin_svc
 
   service_b:
     build:
@@ -31,6 +31,8 @@ services:
       - "50055"
     networks:
       - services_ntw
+    depends_on:
+      - otel_collector
 
   service_a:
     build:
@@ -40,10 +42,10 @@ services:
     container_name: service_a
     ports:
       - "8080:8080"
-    depends_on:
-      - service_b
     networks:
       - services_ntw
+    depends_on:
+      - service_b
 
 networks:
   services_ntw:
