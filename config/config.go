@@ -1,11 +1,10 @@
 package config
 
 type Config struct {
+	ServiceA    ServiceA
+	ServiceB    ServiceB
 	Temperature Temperature
 	CEP         CEP
-	Grpc        Grpc
-	GrpcClient  GrpcClient
-	API         API
 	Zipkin      Zipkin
 	Otel        Otel
 }
@@ -19,20 +18,18 @@ type CEP struct {
 	URL string
 }
 
-type Grpc struct {
+type ServiceB struct {
 	Port string
-}
-
-type GrpcClient struct {
 	Host string
 }
 
-type API struct {
+type ServiceA struct {
 	Port string
 }
 
 type Zipkin struct {
-	Host string
+	Host     string
+	Endpoint string
 }
 
 type Otel struct {

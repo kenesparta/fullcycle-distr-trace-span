@@ -53,8 +53,8 @@ type TemperatureCurrent struct {
 }
 
 type TemperatureOutput struct {
-	Location string
-	TempC    float64
-	TempF    float64
-	TempK    float64
+	Location string  `json:"location"`
+	TempC    float64 `json:"temp_C"`
+	TempF    float64 `json:"temp_F"`
+	TempK    float64 `json:"temp_K"`
 }
