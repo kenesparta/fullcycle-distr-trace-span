@@ -32,7 +32,9 @@ func (gr *Server) temperature(writer http.ResponseWriter, request *http.Request)
 		return
 	}
 
-	response, err := http.Get("http://service_b:50055")
+	response, err := http.Get(
+		"http://service_b:50055/temperature?cep=" + location.CEP,
+	)
 	if err != nil {
 		http.Error(writer, "Error making the request", http.StatusInternalServerError)
 		return

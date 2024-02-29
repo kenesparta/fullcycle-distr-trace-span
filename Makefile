@@ -5,15 +5,11 @@ prepare:
 	cp env.json.example env.json
 
 run:
-	docker compose up -d --force-recreate
+	@docker compose down --rmi local
+	@docker compose up -d --force-recreate
 
 .PHONY: init
 init:
-	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
-	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
-	go install github.com/grpc-ecosystem/grpc-health-probe@latest
-	go generate ./internal/temperature/infra/grpc
-	go generate ./internal/inputhandle/infra/grpc
 	go mod tidy
 
 .PHONY: service-a/build

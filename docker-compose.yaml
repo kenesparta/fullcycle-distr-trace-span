@@ -8,6 +8,8 @@ services:
       - STORAGE_TYPE=mem
     ports:
       - "9411:9411"
+    networks:
+      - services_ntw
 
   otel_collector:
     image: otel/opentelemetry-collector:0.95.0
@@ -20,6 +22,8 @@ services:
       - "4318:4318" # HTTP port
     depends_on:
       - zipkin_svc
+    networks:
+      - services_ntw
 
   service_b:
     build:
