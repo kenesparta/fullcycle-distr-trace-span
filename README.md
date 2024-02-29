@@ -82,7 +82,7 @@ Distributed Trace &amp; Span
     can not found zipcode
     ```
 
-# 🤖 Open Telemetry
+# 🤖 Access to Zipkin
 - You can access to this URL: `http://localhost:9411/`
 - You need to click the refresh button (RUN QUERY):
 ![img.png](img/01_img.png)
