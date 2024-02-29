@@ -19,7 +19,6 @@ func (gr *Server) temperature(writer http.ResponseWriter, request *http.Request)
 
 	ctx, spanFn := gr.TemplateData.OTELTracer.Start(ctx, gr.TemplateData.RequestNameOtel)
 	defer spanFn.End()
-	time.Sleep(time.Millisecond * 200)
 
 	bodyBytes, readErr := io.ReadAll(request.Body)
 	if readErr != nil {

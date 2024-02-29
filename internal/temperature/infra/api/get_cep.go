@@ -36,7 +36,6 @@ func (cap *CEPFromAPI) Get(ctx context.Context, cep string) (entity.Location, er
 	tracer := otel.Tracer("serviceBGetCEP")
 	_, span := tracer.Start(hCtx, "service_b:get_CEP")
 	defer span.End()
-	time.Sleep(time.Millisecond * 200)
 	defer cancel()
 
 	req, reqErr := http.NewRequestWithContext(
