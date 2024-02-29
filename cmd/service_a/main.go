@@ -39,7 +39,7 @@ func main() {
 		TemplateData: web.TemplateData{
 			Title:           "Service A: Orchestration",
 			ExternalCallURL: cfg.ServiceB.Host,
-			RequestNameOtel: "service_a_span",
+			RequestNameOtel: "service_a:all",
 			OTELTracer:      otel.Tracer("service_a"),
 		},
 	}

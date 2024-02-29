@@ -19,6 +19,7 @@ func (gr *Server) temperature(writer http.ResponseWriter, request *http.Request)
 
 	ctx, spanFn := gr.TemplateData.OTELTracer.Start(ctx, gr.TemplateData.RequestNameOtel)
 	defer spanFn.End()
+	time.Sleep(time.Millisecond * 200)
 
 	bodyBytes, readErr := io.ReadAll(request.Body)
 	if readErr != nil {
@@ -29,6 +30,11 @@ func (gr *Server) temperature(writer http.ResponseWriter, request *http.Request)
 	var location dto.LocationInput
 	if unmErr := json.Unmarshal(bodyBytes, &location); unmErr != nil {
 		http.Error(writer, "Error parsing JSON", http.StatusBadRequest)
+		return
+	}
+
+	if err := entity.CEPValidation(location.CEP); err != nil {
+		http.Error(writer, err.Error(), http.StatusUnprocessableEntity)
 		return
 	}
 

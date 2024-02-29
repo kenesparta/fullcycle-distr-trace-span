@@ -5,6 +5,8 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"github.com/kenesparta/fullcycle-distr-trace-span/config"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 	"io"
 	"net/http"
 	"strings"
@@ -30,6 +32,11 @@ func NewCEPFromAPI(cnf *config.Config) *CEPFromAPI {
 
 func (cap *CEPFromAPI) Get(ctx context.Context, cep string) (entity.Location, error) {
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	hCtx := otel.GetTextMapPropagator().Extract(ctx, propagation.HeaderCarrier{})
+	tracer := otel.Tracer("serviceBGetCEP")
+	_, span := tracer.Start(hCtx, "service_b:get_CEP")
+	defer span.End()
+	time.Sleep(time.Millisecond * 200)
 	defer cancel()
 
 	req, reqErr := http.NewRequestWithContext(

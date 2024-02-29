@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/kenesparta/fullcycle-distr-trace-span/config"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 	"io"
 	"net/http"
 	"net/url"
@@ -31,6 +33,11 @@ func NewWeatherFromAPI(cnf *config.Config) *WeatherFromAPI {
 }
 
 func (wap *WeatherFromAPI) Get(ctx context.Context, location string) (entity.Temperature, error) {
+	hCtx := otel.GetTextMapPropagator().Extract(ctx, propagation.HeaderCarrier{})
+	tracer := otel.Tracer("serviceBGetWeather")
+	_, span := tracer.Start(hCtx, "service_b:get_weather")
+	defer span.End()
+
 	u, urlErr := url.Parse(createWeatherEndpoint(wap.cnf.Temperature.URL))
 	if urlErr != nil {
 		fmt.Printf("Error parsing URL: %s\n", urlErr)

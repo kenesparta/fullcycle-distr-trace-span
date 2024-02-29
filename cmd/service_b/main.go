@@ -23,23 +23,23 @@ func main() {
 	viperCfg := config.NewViper("env.json")
 	viperCfg.ReadViper(&cfg)
 
-	gw := usecase.NewGetWeather(
-		api.NewCEPFromAPI(&cfg),
-		api.NewWeatherFromAPI(&cfg),
-	)
-
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, os.Interrupt)
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 
 	providerShutdown, provErr := opentel.InitProvider(
-		"service_b_temperature",
+		"service_b",
 		cfg.Zipkin.Endpoint,
 	)
 	if provErr != nil {
 		return
 	}
+
+	gw := usecase.NewGetWeather(
+		api.NewCEPFromAPI(&cfg),
+		api.NewWeatherFromAPI(&cfg),
+	)
 
 	defer func() {
 		if err := providerShutdown(ctx); err != nil {
@@ -55,8 +55,8 @@ func main() {
 			hCtx := r.Context()
 			hCtx = otel.GetTextMapPropagator().Extract(hCtx, carrier)
 
-			tracer := otel.Tracer("serviceB")
-			_, span := tracer.Start(hCtx, "service_b_span")
+			tracer := otel.Tracer("service_b")
+			_, span := tracer.Start(hCtx, "service_b:all")
 			defer span.End()
 
 			temperature, execErr := gw.Execute(hCtx, dto.LocationInput{
