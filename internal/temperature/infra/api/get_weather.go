@@ -56,6 +56,7 @@ func (wap *WeatherFromAPI) Get(ctx context.Context, location string) (entity.Tem
 	}
 
 	client := &http.Client{
+		Timeout: time.Second * 10,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: true,

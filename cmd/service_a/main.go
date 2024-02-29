@@ -2,14 +2,13 @@ package main
 
 import (
 	"context"
-	"log"
-	"os"
-	"os/signal"
-
 	conf "github.com/kenesparta/fullcycle-distr-trace-span/config"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/inputhandle/infra/opentel"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/inputhandle/infra/web"
 	"go.opentelemetry.io/otel"
+	"log"
+	"os"
+	"os/signal"
 )
 
 func main() {
@@ -23,7 +22,7 @@ func main() {
 	defer cancel()
 
 	providerShutdown, provErr := opentel.InitProvider(
-		"service_a_provider",
+		"service_a_orchestration",
 		cfg.Zipkin.Endpoint,
 	)
 	if provErr != nil {
@@ -38,14 +37,10 @@ func main() {
 
 	server := web.Server{
 		TemplateData: web.TemplateData{
-			Title:              "",
-			ResponseTime:       0,
-			BackgroundColor:    "",
-			ExternalCallMethod: "",
-			ExternalCallURL:    cfg.ServiceB.Host,
-			Content:            "",
-			RequestNameOtel:    "service_a_span",
-			OTELTracer:         otel.Tracer("service_a"),
+			Title:           "Service A: Orchestration",
+			ExternalCallURL: cfg.ServiceB.Host,
+			RequestNameOtel: "service_a_span",
+			OTELTracer:      otel.Tracer("service_a"),
 		},
 	}
 

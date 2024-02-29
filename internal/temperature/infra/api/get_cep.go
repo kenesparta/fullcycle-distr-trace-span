@@ -43,6 +43,7 @@ func (cap *CEPFromAPI) Get(ctx context.Context, cep string) (entity.Location, er
 	}
 
 	client := &http.Client{
+		Timeout: time.Second * 10,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: true,
@@ -65,7 +66,7 @@ func (cap *CEPFromAPI) Get(ctx context.Context, cep string) (entity.Location, er
 		return entity.Location{}, unmErr
 	}
 
-	if location.ErrorOut == "true" {
+	if location.CEP == "" {
 		return entity.Location{}, entity.ErrCEPNotFound
 	}
 

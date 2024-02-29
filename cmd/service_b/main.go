@@ -1,14 +1,21 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"github.com/kenesparta/fullcycle-distr-trace-span/config"
+	"github.com/kenesparta/fullcycle-distr-trace-span/internal/inputhandle/infra/opentel"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/dto"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/entity"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/infra/api"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/usecase"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
+	"log"
 	"net/http"
+	"os"
+	"os/signal"
 )
 
 func main() {
@@ -21,11 +28,38 @@ func main() {
 		api.NewWeatherFromAPI(&cfg),
 	)
 
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, os.Interrupt)
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer cancel()
+
+	providerShutdown, provErr := opentel.InitProvider(
+		"service_b_temperature",
+		cfg.Zipkin.Endpoint,
+	)
+	if provErr != nil {
+		return
+	}
+
+	defer func() {
+		if err := providerShutdown(ctx); err != nil {
+			log.Printf("failed shuting down the tracer provider %s\n", err.Error())
+		}
+	}()
+
 	mux := http.NewServeMux()
 	mux.HandleFunc(
 		"GET /temperature",
 		func(w http.ResponseWriter, r *http.Request) {
-			temperature, execErr := gw.Execute(r.Context(), dto.LocationInput{
+			carrier := propagation.HeaderCarrier(r.Header)
+			hCtx := r.Context()
+			hCtx = otel.GetTextMapPropagator().Extract(hCtx, carrier)
+
+			tracer := otel.Tracer("serviceB")
+			_, span := tracer.Start(hCtx, "service_b_span")
+			defer span.End()
+
+			temperature, execErr := gw.Execute(hCtx, dto.LocationInput{
 				CEP: r.URL.Query().Get("cep"),
 			})
 

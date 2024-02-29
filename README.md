@@ -14,32 +14,28 @@ Distributed Trace &amp; Span
 - Execute the command: `make prepare`.
 - We have this JSON example, you must change the `temperature.api_key` with your weather API key credentials in the
   file: `env.json`.
-  ```json
-  {
-    "api": {
-      "port": "8085"
-    },
-    "grpc": {
-      "port": "50055"
-    },
-    "grpc_client": {
-      "host": "service_b:50055"
-    },
-    "temperature" : {
-      "url": "https://api.weatherapi.com",
-      "api_key": "3a8c1f1cf26f457394342515242702"
-    },
-    "cep": {
-      "url": "https://viacep.com.br"
-    },
-    "zipkin": {
-      "host": "zipkin_svc:9411"
-    },
-    "otel": {
-      "host": ""
-    }
+```json
+{
+  "service_a": {
+    "port": "8085"
+  },
+  "service_b": {
+    "port": "50055",
+    "host": "service_b:50055"
+  },
+  "temperature" : {
+    "url": "https://api.weatherapi.com",
+    "api_key": "3a8c1f1cf26f457394342515242702"
+  },
+  "cep": {
+    "url": "https://viacep.com.br"
+  },
+  "zipkin": {
+    "host": "zipkin_svc:9411",
+    "endpoint": "http://zipkin_svc:9411/api/v2/spans"
   }
-  ```
+}
+```
 - Finally, you can run the command `make run`.
 
 # 🧪 Testing in Local
@@ -87,3 +83,9 @@ Distributed Trace &amp; Span
     ```
 
 # 🤖 Open Telemetry
+- You can access to this URL: `http://localhost:9411/`
+- You need to click the refresh button (RUN QUERY):
+![img.png](img/01_img.png)
+- So you can see the results:
+![img.png](img/02_img.png)
+![img.png](img/03_img.png)

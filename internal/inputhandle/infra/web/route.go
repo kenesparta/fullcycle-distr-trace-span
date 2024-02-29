@@ -2,9 +2,9 @@ package web
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/inputhandle/dto"
 	"github.com/kenesparta/fullcycle-distr-trace-span/internal/temperature/entity"
@@ -13,16 +13,16 @@ import (
 )
 
 func (gr *Server) temperature(writer http.ResponseWriter, request *http.Request) {
-	carrier := propagation.HeaderCarrier{}
+	carrier := propagation.HeaderCarrier(request.Header)
 	ctx := request.Context()
 	ctx = otel.GetTextMapPropagator().Extract(ctx, carrier)
 
 	ctx, spanFn := gr.TemplateData.OTELTracer.Start(ctx, gr.TemplateData.RequestNameOtel)
 	defer spanFn.End()
 
-	bodyBytes, err := io.ReadAll(request.Body)
-	if err != nil {
-		http.Error(writer, "Error reading request body", http.StatusBadRequest)
+	bodyBytes, readErr := io.ReadAll(request.Body)
+	if readErr != nil {
+		http.Error(writer, readErr.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -32,16 +32,30 @@ func (gr *Server) temperature(writer http.ResponseWriter, request *http.Request)
 		return
 	}
 
-	response, err := http.Get(
-		"http://service_b:50055/temperature?cep=" + location.CEP,
+	reqCtx, reqCtxErr := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		"http://service_b:50055/temperature?cep="+location.CEP,
+		nil,
 	)
-	if err != nil {
-		http.Error(writer, "Error making the request", http.StatusInternalServerError)
+	if reqCtxErr != nil {
+		http.Error(writer, reqCtxErr.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer response.Body.Close()
 
-	switch response.StatusCode {
+	otel.GetTextMapPropagator().Inject(ctx, propagation.HeaderCarrier(reqCtx.Header))
+	httpClient := http.Client{
+		Timeout: time.Second * 10,
+	}
+
+	clientDo, doErr := httpClient.Do(reqCtx)
+	if doErr != nil {
+		http.Error(writer, doErr.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer clientDo.Body.Close()
+
+	switch clientDo.StatusCode {
 	case http.StatusUnprocessableEntity:
 		http.Error(writer, entity.ErrCEPNotValid.Error(), http.StatusUnprocessableEntity)
 		return
@@ -50,16 +64,19 @@ func (gr *Server) temperature(writer http.ResponseWriter, request *http.Request)
 		return
 	}
 
-	locRespBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		fmt.Println("Error reading response body:", err)
+	locRespBody, bReadErr := io.ReadAll(clientDo.Body)
+	if bReadErr != nil {
+		http.Error(writer, bReadErr.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	var locTempResp dto.TemperatureAPIOutput
-	json.Unmarshal(locRespBody, &locTempResp)
-
 	writer.Header().Set("Content-Type", "application/json")
+	var locTempResp dto.TemperatureAPIOutput
+	if err := json.Unmarshal(locRespBody, &locTempResp); err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	jsonData, marshErr := json.Marshal(dto.TemperatureOutput{
 		City:  locTempResp.Location,
 		TempC: locTempResp.TempC,

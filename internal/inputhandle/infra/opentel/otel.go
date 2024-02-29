@@ -30,16 +30,6 @@ func InitProvider(serviceName, collectorURL string) (ShutdownFunction, error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
-	//conn, dialErr := grpc.DialContext(
-	//	ctx,
-	//	collectorURL,
-	//	grpc.WithTransportCredentials(insecure.NewCredentials()),
-	//	grpc.WithBlock(),
-	//)
-	//if dialErr != nil {
-	//	return nil, fmt.Errorf("failed to gRPC connection to collector %w", dialErr)
-	//}
-
 	exporter, err := zipkin.New(collectorURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create Zipkin exporter: %w", err)
